@@ -38,6 +38,7 @@ export type Talebe = {
   hadisNo?: number;
   hadisGunler?: Record<string, number[]>;
   aidat?: Record<string, boolean>;
+  grup?: Grup;
   aidatSadece?: boolean;
   aidatHaric?: boolean;
 };
