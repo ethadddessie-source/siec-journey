@@ -19,6 +19,14 @@ export type KiraatYonu = "alttan" | "ustten";
 
 export type Ders = "kuran" | "fikih" | "hadis";
 
+export type Grup = "seviye1" | "seviye2" | "hazirlik";
+
+export const GRUPLAR: { id: Grup; ad: string; hoca: string }[] = [
+  { id: "seviye1", ad: "1. Seviye", hoca: "Abdurehim Hoca" },
+  { id: "seviye2", ad: "2. Seviye", hoca: "Selahaddin Hoca" },
+  { id: "hazirlik", ad: "Hazırlık", hoca: "Abdurrahman Hoca" },
+];
+
 export type Talebe = {
   id: string;
   isim: string;
@@ -38,6 +46,7 @@ export type Talebe = {
   hadisNo?: number;
   hadisGunler?: Record<string, number[]>;
   aidat?: Record<string, boolean>;
+  grup?: Grup;
   aidatSadece?: boolean;
   aidatHaric?: boolean;
 };
@@ -86,6 +95,10 @@ export function talebeleriDinle(
             v.aidat && typeof v.aidat === "object"
               ? (v.aidat as Record<string, boolean>)
               : {},
+          grup:
+            v.grup === "seviye1" || v.grup === "seviye2" || v.grup === "hazirlik"
+              ? v.grup
+              : undefined,
           aidatSadece: v.aidatSadece === true,
           aidatHaric: v.aidatHaric === true,
         };
