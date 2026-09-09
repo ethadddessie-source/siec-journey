@@ -24,6 +24,7 @@ import {
   aidatOdemeAyarla,
   type Talebe,
 } from "@/lib/talebeler";
+import { bashHarfler } from "@/lib/foto";
 
 const AY_ADLARI = [
   "Ocak",
@@ -63,6 +64,7 @@ export default function AidatPanel({
   const [tutar, setTutar] = useState(0);
   const [tutarDuzenle, setTutarDuzenle] = useState(false);
   const [tutarTaslak, setTutarTaslak] = useState("0");
+  const [filtre, setFiltre] = useState<"tumu" | "odeyen" | "odemeyen">("tumu");
 
   useEffect(() => {
     const unsub = aidatTutariniDinle((t) => {
@@ -87,10 +89,21 @@ export default function AidatPanel({
     };
   }, [talebeler, ayKey, tutar]);
 
+  const gorunenTalebeler = useMemo(() => {
+    if (filtre === "odeyen") {
+      return talebeler.filter((t) => t.aidat?.[ayKey]);
+    }
+    if (filtre === "odemeyen") {
+      return talebeler.filter((t) => !t.aidat?.[ayKey]);
+    }
+    return talebeler;
+  }, [talebeler, ayKey, filtre]);
+
   const ayDegistir = (fark: number) => {
     const d = new Date(yil, ay + fark, 1);
     setYil(d.getFullYear());
     setAy(d.getMonth());
+    setFiltre("tumu");
   };
 
   const buAy =
@@ -182,6 +195,7 @@ export default function AidatPanel({
                 onClick={() => {
                   setYil(simdi.getFullYear());
                   setAy(simdi.getMonth());
+                  setFiltre("tumu");
                 }}
               >
                 Bu ay
@@ -193,10 +207,35 @@ export default function AidatPanel({
 
       {/* Özet */}
       <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Ozet etiket="Ödeyen" deger={`${ozet.odeyen}/${ozet.toplam}`} />
-        <Ozet etiket="Ödemeyen" deger={String(ozet.odemeyen)} vurgu="uyari" />
-        <Ozet etiket="Toplanan" deger={paraFmt(ozet.tahsil)} vurgu="iyi" />
-        <Ozet etiket="Kalan" deger={paraFmt(ozet.kalan)} />
+        <Ozet
+          etiket="Ödeyen"
+          deger={`${ozet.odeyen}/${ozet.toplam}`}
+          vurgu="iyi"
+          aktif={filtre === "odeyen"}
+          onClick={() =>
+            setFiltre((f) => (f === "odeyen" ? "tumu" : "odeyen"))
+          }
+        />
+        <Ozet
+          etiket="Ödemeyen"
+          deger={String(ozet.odemeyen)}
+          vurgu="uyari"
+          aktif={filtre === "odemeyen"}
+          onClick={() =>
+            setFiltre((f) => (f === "odemeyen" ? "tumu" : "odemeyen"))
+          }
+        />
+        <Ozet
+          etiket="Toplanan"
+          deger={paraFmt(ozet.tahsil)}
+          vurgu="iyi"
+          onClick={() => setFiltre("tumu")}
+        />
+        <Ozet
+          etiket="Kalan"
+          deger={paraFmt(ozet.kalan)}
+          onClick={() => setFiltre("tumu")}
+        />
       </div>
 
       <Card className="overflow-hidden">
@@ -217,7 +256,7 @@ export default function AidatPanel({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {talebeler.map((t, i) => {
+              {gorunenTalebeler.map((t, i) => {
                 const odendi = !!t.aidat?.[ayKey];
                 return (
                   <TableRow key={t.id} className="hover:bg-muted/30">
@@ -228,9 +267,12 @@ export default function AidatPanel({
                       <button
                         type="button"
                         onClick={() => onTalebe?.(t)}
-                        className="truncate text-left text-sm hover:text-primary hover:underline"
+                        className="group inline-flex items-center gap-2 text-left text-sm hover:text-primary sm:gap-3"
                       >
-                        {t.isim}
+                        <TalebeAvatar talebe={t} boyut={32} />
+                        <span className="truncate group-hover:underline">
+                          {t.isim}
+                        </span>
                       </button>
                     </TableCell>
                     <TableCell className="px-2 py-2 text-center text-xs tabular-nums text-muted-foreground sm:px-4 sm:py-3 sm:text-sm">
@@ -260,13 +302,19 @@ export default function AidatPanel({
                   </TableRow>
                 );
               })}
-              {talebeler.length === 0 && (
+              {gorunenTalebeler.length === 0 && (
                 <TableRow>
                   <TableCell
                     colSpan={4}
                     className="py-10 text-center text-sm text-muted-foreground"
                   >
-                    Henüz talebe yok.
+                    {talebeler.length === 0
+                      ? "Henüz talebe yok."
+                      : filtre === "odeyen"
+                        ? "Bu ay ödeyen talebe yok."
+                        : filtre === "odemeyen"
+                          ? "Bu ay ödemeyen talebe yok."
+                          : "Henüz talebe yok."}
                   </TableCell>
                 </TableRow>
               )}
@@ -282,27 +330,74 @@ function Ozet({
   etiket,
   deger,
   vurgu,
+  aktif,
+  onClick,
 }: {
   etiket: string;
   deger: string;
   vurgu?: "iyi" | "uyari";
+  aktif?: boolean;
+  onClick?: () => void;
 }) {
+  const icerik = (
+    <CardContent className="px-3 py-3">
+      <p className="text-xs text-muted-foreground">{etiket}</p>
+      <p
+        className={`mt-1 text-lg font-semibold tabular-nums sm:text-xl ${
+          vurgu === "iyi"
+            ? "text-primary"
+            : vurgu === "uyari"
+              ? "text-destructive"
+              : "text-foreground"
+        }`}
+      >
+        {deger}
+      </p>
+    </CardContent>
+  );
+
+  if (onClick) {
+    return (
+      <Card
+        onClick={onClick}
+        className={`cursor-pointer transition-colors ${
+          aktif
+            ? "border-primary bg-primary/5"
+            : "border-border/60 hover:bg-muted/40 hover:border-primary/40"
+        }`}
+      >
+        {icerik}
+      </Card>
+    );
+  }
+
+  return <Card className="border-border/60">{icerik}</Card>;
+}
+
+function TalebeAvatar({
+  talebe,
+  boyut = 40,
+}: {
+  talebe: Talebe;
+  boyut?: number;
+}) {
+  const stil = { width: boyut, height: boyut } as const;
+  if (talebe.fotoUrl) {
+    return (
+      <img
+        src={talebe.fotoUrl}
+        alt={talebe.isim}
+        style={stil}
+        className="rounded-full object-cover ring-1 ring-border"
+      />
+    );
+  }
   return (
-    <Card>
-      <CardContent className="px-3 py-3">
-        <p className="text-xs text-muted-foreground">{etiket}</p>
-        <p
-          className={`mt-1 text-lg font-semibold tabular-nums sm:text-xl ${
-            vurgu === "iyi"
-              ? "text-primary"
-              : vurgu === "uyari"
-                ? "text-destructive"
-                : "text-foreground"
-          }`}
-        >
-          {deger}
-        </p>
-      </CardContent>
-    </Card>
+    <div
+      style={stil}
+      className="inline-flex items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary ring-1 ring-primary/20"
+    >
+      {bashHarfler(talebe.isim)}
+    </div>
   );
 }
