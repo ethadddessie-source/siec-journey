@@ -95,6 +95,10 @@ export function talebeleriDinle(
             v.aidat && typeof v.aidat === "object"
               ? (v.aidat as Record<string, boolean>)
               : {},
+          grup:
+            v.grup === "seviye1" || v.grup === "seviye2" || v.grup === "hazirlik"
+              ? v.grup
+              : undefined,
           aidatSadece: v.aidatSadece === true,
           aidatHaric: v.aidatHaric === true,
         };
