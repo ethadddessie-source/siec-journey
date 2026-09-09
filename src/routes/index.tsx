@@ -750,18 +750,25 @@ function Index() {
         </div>
 
         <Card className="overflow-hidden">
-          <div className="overflow-x-auto">
-            <Table>
+            <Table className="table-fixed">
+              <colgroup>
+                <col className="w-[7%]" />
+                <col className={hocaModu ? "w-[31%]" : "w-[38%]"} />
+                <col className={hocaModu ? "w-[21%]" : "w-[25%]"} />
+                <col className="w-[12%]" />
+                <col className="w-[11%]" />
+                {hocaModu && <col className="w-[18%]" />}
+              </colgroup>
               <TableHeader>
                 <TableRow className="bg-muted/40">
                   <TableHead className="w-8 px-1 text-center text-xs sm:w-12 sm:px-4">#</TableHead>
-                  <TableHead className="px-1.5 text-sm sm:px-4">{tr("talebe")}</TableHead>
+                  <TableHead className="px-1 text-xs sm:px-4 sm:text-sm">{tr("talebe")}</TableHead>
                   <TableHead className="px-1 text-center sm:px-4">
                     <Select
                       value={String(seciliGun)}
                       onValueChange={(v) => setSeciliGun(Number(v))}
                     >
-                      <SelectTrigger className="mx-auto h-8 w-[100px] px-2 text-xs sm:w-[130px] sm:text-sm">
+                      <SelectTrigger className="mx-auto h-7 w-full min-w-0 px-1 text-[10px] sm:h-8 sm:w-[130px] sm:px-2 sm:text-sm">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -773,10 +780,10 @@ function Index() {
                       </SelectContent>
                     </Select>
                   </TableHead>
-                  <TableHead className="px-2 pr-3 text-center text-xs sm:px-4 sm:text-sm">{tr("sf")}</TableHead>
-                  <TableHead className="px-2 pl-3 text-center text-xs sm:px-4 sm:text-sm">{tr("cuz")}</TableHead>
+                  <TableHead className="px-0.5 text-center text-[10px] sm:px-4 sm:text-sm">{tr("sf")}</TableHead>
+                  <TableHead className="px-0.5 text-center text-[10px] sm:px-4 sm:text-sm">{tr("cuz")}</TableHead>
                   {hocaModu && (
-                    <TableHead className="w-14 px-1 text-right text-xs sm:w-24 sm:px-4 sm:text-sm">{tr("islem")}</TableHead>
+                    <TableHead className="px-0.5 text-right text-[10px] sm:px-4 sm:text-sm">{tr("islem")}</TableHead>
                   )}
                 </TableRow>
               </TableHeader>
@@ -788,40 +795,42 @@ function Index() {
                     <TableCell className="px-1 py-2 text-center text-xs text-muted-foreground sm:px-4 sm:py-3 sm:text-sm">
                       {i + 1}
                     </TableCell>
-                    <TableCell className="px-1.5 py-2 font-medium sm:px-4 sm:py-3">
+                    <TableCell className="min-w-0 px-1 py-2 font-medium sm:px-4 sm:py-3">
                       <button
                         type="button"
                         onClick={() => setProfilGoster(t)}
-                        className="group inline-flex items-center gap-1.5 text-left text-sm hover:text-primary sm:gap-2"
+                        className="group flex w-full min-w-0 items-center gap-1 text-left text-xs hover:text-primary sm:gap-2 sm:text-sm"
                       >
-                        <TalebeAvatar talebe={t} boyut={30} />
-                        <span className="truncate group-hover:underline">{t.isim}</span>
+                        <span className="shrink-0 scale-75 sm:scale-100">
+                          <TalebeAvatar talebe={t} boyut={30} />
+                        </span>
+                        <span className="min-w-0 truncate group-hover:underline">{t.isim}</span>
                       </button>
                     </TableCell>
-                    <TableCell className="px-1 py-2 pr-2 text-center sm:px-4 sm:py-3">
+                    <TableCell className="px-0.5 py-2 text-center sm:px-4 sm:py-3">
                       <GunDurum
                         verdi={getDersGunler(t, seciliDers, seciliHafta).includes(seciliGun)}
                         duzenlenebilir={hocaModu}
                         onToggle={() => dersGunToggle(t, seciliDers, seciliGun)}
                       />
                     </TableCell>
-                    <TableCell className="px-2 pr-3 py-2 text-center text-xs tabular-nums sm:px-4 sm:py-3 sm:text-sm">
+                    <TableCell className="px-0.5 py-2 text-center text-[10px] tabular-nums sm:px-4 sm:py-3 sm:text-sm">
                       <SayfaEditor
                         talebe={t}
                         duzenlenebilir={hocaModu}
                         onKaydet={(yeni) => guncelle(t.id, { sayfa: yeni })}
                       />
                     </TableCell>
-                    <TableCell className="px-2 pl-3 py-2 text-center text-xs tabular-nums text-muted-foreground sm:px-4 sm:py-3 sm:text-sm">
+                    <TableCell className="px-0.5 py-2 text-center text-[10px] tabular-nums text-muted-foreground sm:px-4 sm:py-3 sm:text-sm">
                       {cuzHesapla(t.sayfa)}
                     </TableCell>
                     {hocaModu && (
-                      <TableCell className="px-1 py-2 text-right sm:px-4 sm:py-3">
-                        <div className="flex justify-end gap-0.5 sm:gap-1">
+                      <TableCell className="px-0.5 py-2 text-right sm:px-4 sm:py-3">
+                        <div className="flex justify-end gap-0 sm:gap-1">
                           <Button
                             size="icon"
                             variant="ghost"
-                            className="h-7 w-7 sm:h-8 sm:w-8"
+                            className="h-6 w-6 sm:h-8 sm:w-8"
                             onClick={() => setDuzenlenen(t)}
                           >
                             <Pencil className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -829,7 +838,7 @@ function Index() {
                           <Button
                             size="icon"
                             variant="ghost"
-                            className="h-7 w-7 text-destructive hover:text-destructive sm:h-8 sm:w-8"
+                            className="h-6 w-6 text-destructive hover:text-destructive sm:h-8 sm:w-8"
                             onClick={() => sil(t.id)}
                           >
                             <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -875,7 +884,6 @@ function Index() {
                 )}
               </TableBody>
             </Table>
-          </div>
         </Card>
 
         {hocaModu && (
