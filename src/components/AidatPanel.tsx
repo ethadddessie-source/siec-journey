@@ -239,18 +239,23 @@ export default function AidatPanel({
       </div>
 
       <Card className="overflow-hidden">
-        <div className="overflow-x-auto">
-          <Table>
+          <Table className="table-fixed">
+            <colgroup>
+              <col className="w-[8%]" />
+              <col className="w-[42%]" />
+              <col className="w-[20%]" />
+              <col className="w-[30%]" />
+            </colgroup>
             <TableHeader>
               <TableRow className="bg-muted/40">
                 <TableHead className="w-8 px-1 text-center text-xs sm:w-12 sm:px-4">
                   #
                 </TableHead>
-                <TableHead className="px-1.5 text-sm sm:px-4">Talebe</TableHead>
-                <TableHead className="px-2 text-center text-xs sm:px-4 sm:text-sm">
+                <TableHead className="px-1 text-xs sm:px-4 sm:text-sm">Talebe</TableHead>
+                <TableHead className="px-0.5 text-center text-[10px] sm:px-4 sm:text-sm">
                   Tutar
                 </TableHead>
-                <TableHead className="px-2 text-center text-xs sm:px-4 sm:text-sm">
+                <TableHead className="px-0.5 text-center text-[10px] sm:px-4 sm:text-sm">
                   Durum
                 </TableHead>
               </TableRow>
@@ -263,29 +268,32 @@ export default function AidatPanel({
                     <TableCell className="px-1 py-2 text-center text-xs text-muted-foreground sm:px-4 sm:py-3 sm:text-sm">
                       {i + 1}
                     </TableCell>
-                    <TableCell className="px-1.5 py-2 font-medium sm:px-4 sm:py-3">
+                    <TableCell className="min-w-0 px-1 py-2 font-medium sm:px-4 sm:py-3">
                       <button
                         type="button"
                         onClick={() => onTalebe?.(t)}
-                        className="group inline-flex items-center gap-2 text-left text-sm hover:text-primary sm:gap-3"
+                        className="group flex w-full min-w-0 items-center gap-1.5 text-left text-xs hover:text-primary sm:gap-3 sm:text-sm"
                       >
-                        <TalebeAvatar talebe={t} boyut={32} />
-                        <span className="truncate group-hover:underline">
+                        <span className="shrink-0 scale-75 sm:scale-100">
+                          <TalebeAvatar talebe={t} boyut={32} />
+                        </span>
+                        <span className="min-w-0 truncate group-hover:underline">
                           {t.isim}
                         </span>
                       </button>
                     </TableCell>
-                    <TableCell className="px-2 py-2 text-center text-xs tabular-nums text-muted-foreground sm:px-4 sm:py-3 sm:text-sm">
-                      {paraFmt(tutar)}
+                    <TableCell className="px-0.5 py-2 text-center text-[10px] tabular-nums text-muted-foreground sm:px-4 sm:py-3 sm:text-sm">
+                      <span className="sm:hidden">{tutar.toLocaleString("tr-TR")}</span>
+                      <span className="hidden sm:inline">{paraFmt(tutar)}</span>
                     </TableCell>
-                    <TableCell className="px-2 py-2 text-center sm:px-4 sm:py-3">
+                    <TableCell className="px-0.5 py-2 text-center sm:px-4 sm:py-3">
                       <button
                         type="button"
                         disabled={!hocaModu}
                         onClick={() =>
                           void aidatOdemeAyarla(t, ayKey, !odendi)
                         }
-                        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium transition sm:text-sm ${
+                        className={`inline-flex max-w-full items-center gap-0.5 rounded-full px-1.5 py-1 text-[10px] font-medium transition sm:gap-1 sm:px-2.5 sm:text-sm ${
                           odendi
                             ? "bg-primary/15 text-primary"
                             : "bg-destructive/10 text-destructive"
@@ -320,7 +328,6 @@ export default function AidatPanel({
               )}
             </TableBody>
           </Table>
-        </div>
       </Card>
     </div>
   );
