@@ -23,6 +23,15 @@ import {
 import { Label } from "@/components/ui/label";
 import AidatPanel from "@/components/AidatPanel";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Menu } from "lucide-react";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -542,6 +551,39 @@ function Index() {
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-6xl px-2 py-4 sm:px-6 sm:py-12">
         <header className="relative mb-6 flex flex-col items-center gap-3 text-center sm:mb-12 sm:gap-5">
+          <div className="absolute left-0 top-0 flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  aria-label="Menü"
+                  className="h-10 w-10 rounded-full"
+                >
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                <DropdownMenuLabel>Bölümler</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {([
+                  ["hafizlik", "Hafızlık Takibi"],
+                  ["aidat", "Aidat Takibi"],
+                ] as const).map(([k, etiket]) => (
+                  <DropdownMenuItem
+                    key={k}
+                    onSelect={() => setSekme(k)}
+                    className={sekme === k ? "font-semibold text-primary" : ""}
+                  >
+                    {etiket}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <span className="hidden text-sm font-medium text-muted-foreground sm:inline">
+              {sekme === "aidat" ? "Aidat Takibi" : "Hafızlık Takibi"}
+            </span>
+          </div>
           <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary sm:h-20 sm:w-20">
             <GraduationCap className="h-7 w-7 sm:h-10 sm:w-10" />
           </div>
@@ -555,27 +597,6 @@ function Index() {
           </div>
         </header>
 
-        <div className="mb-6 flex justify-center">
-          <div className="inline-flex w-full max-w-md rounded-full border border-border bg-secondary/40 p-1 sm:w-auto">
-            {([
-              ["hafizlik", "Hafızlık Takibi"],
-              ["aidat", "Aidat Takibi"],
-            ] as const).map(([k, etiket]) => (
-              <button
-                key={k}
-                type="button"
-                onClick={() => setSekme(k)}
-                className={`flex-1 whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition sm:px-8 sm:text-base ${
-                  sekme === k
-                    ? "bg-primary text-primary-foreground shadow"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {etiket}
-              </button>
-            ))}
-          </div>
-        </div>
 
         <Card className="mb-6 border-accent/40 bg-secondary/40">
           <CardContent className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
